@@ -5,7 +5,7 @@
 """INIT"""
 
 import shelve, os, calendar, time
-shelf_file = shelve.open("data")
+shelf_file = shelve.open("var_data")
 shelf_file.setdefault("count", 1)
 
 
@@ -18,27 +18,6 @@ twin_single = {"available": 5, "price": 75, "adults": 2, "children": 2}
 standard_double = {"available": 5, "price": 99, "adults": 2, "children": 0}
 twin_double = {"available": 5, "price": 99, "adults": 2, "children": 2}
 
-
-"""CLASSES"""
-
-class Guest(object):
-
-    def __init__(self, first_name, second_name, adults, children, nights):
-        self.first_name = first_name
-        self.second_name = second_name
-        self.adults = adults
-        self.children = children
-        self.nights = nights
-        self.deposit = 200
-        self.balance = 0
-
-    def check_in(self): # set dates
-
-        check_in_date = input("Enter check in date (DD/MM/YYYY): ")
-
-
-    def check_out(self):
-        pass
 
 
 """METHODS"""
