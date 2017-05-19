@@ -85,14 +85,15 @@ def get_guest_details(): #with input validation
     while room not in ["P", "L", "SS", "TS", "SD", "TD"]:
         try:
             room = input("Enter room: ").upper()
-        except:
-            print('You must enter "P", "L", "SS", "TS", "SD", "TD"')
 
             if check_room_availability(room) == False:
                 room = ""
                 continue
             else:
                 break
+
+        except:
+            print('You must enter "P", "L", "SS", "TS", "SD", "TD"')
 
 
     store_guest_to_database(first_name, second_name, adults, children, check_in_date, nights, room)
@@ -105,38 +106,41 @@ def store_guest_to_database(first_name, second_name, adults, children, check_in_
     guest_data["count"] += 1
     guest_id = "GuestID: " + str(guest_data["count"])[1:]
 
-    # display input data before confirmation
-    print("\n" + guest_id +
-          "\nFirst: " + first_name +
-          "\nSecond: " + second_name +
-          "\nAdults: " + adults +
-          "\nChildren: " + children +
-          "\nCheck in: " + check_in_date +
-          "\nNights: " + nights +
-          "\nRoom: " + room_data[room]["type"])
+
+    guest_data[guest_id] = {"first_name": first_name, "second_name": second_name,
+                            "adults": adults, "children": children,
+                            "check_in_date": check_in_date, "nights": nights,
+                            "room": room}
+
+    view_guest_details(guest_id)
 
     confirm = ""
     while confirm not in ["Y", "N"]:
         confirm = input("\nPlease confirm guest details are correct Y/N: ")
 
         if confirm.upper() == "Y":
-            guest_data[guest_id] = {"first_name": first_name, "second_name": second_name,
-                                    "adults": adults, "children": children, "nights": nights,
-                                    "room": room_data[room]["type"]}
             print(guest_id + " " + first_name + " " + second_name + " saved to database.")
             input()
             menu()
 
         elif confirm.upper() == "N":
+            del guest_data[guest_id]
             print("Cancelled.. exiting to main menu.. ")
             time.sleep(2)
             menu()
 
 
-def view_guest_details():
+def view_guest_details(guest_id):
 
-    for guest_id in guest_data.keys():
-        print(guest_id + " " + str(guest_data[guest_id]))
+    print("\n" + guest_id +
+          "\nFirst: " + guest_data[guest_id]["first_name"] +
+          "\nSecond: " + guest_data[guest_id]["second_name"] +
+          "\nAdults: " + guest_data[guest_id]["adults"] +
+          "\nChildren: " + guest_data[guest_id]["children"] +
+          "\nIn Date: " + guest_data[guest_id]["check_in_date"] +
+          "\nNights: " + guest_data[guest_id]["nights"] +
+          "\nRoom: " + str(room_data[guest_data[guest_id]["room"]]["type"]))
+            #Access room_data with key from guest_data[guest_id]["room"]
 
 def check_out_guests():
     pass
@@ -159,13 +163,21 @@ def menu():    #Display menu
         elif menu_item == "2":    
             get_guest_details()
 
-        elif menu_item == "3":
-            view_guest_details()
+        elif menu_item == "3": # View all guest details
+
+            for guest_id in guest_data.keys(): #BUGFIX: ignore guest_data "count" variable
+                if str(guest_data[guest_id]).isdigit():
+                    continue
+                else:
+                    view_guest_details(guest_id)
+            input("\nPress any key to return to menu..")
+            menu()
+
 
         elif menu_item == "4":
             check_out_guests()
 
-        elif menu_item == "5":
+        elif menu_item == "5": # TOFIX: this option rreturns to menu
             guest_data.close()
 
             break
