@@ -10,7 +10,7 @@ guest_data.setdefault("count", 10000)
 
 
 """GLOBALS"""
-room_data = {
+room_data = { # store to shelve file
         "P": {"type": "Penthouse", "available": 1, "price": 1000, "adults": 25},
         "L": {"type": "Luxury", "available": 5, "price": 250, "adults": 5, "children":5},
         "SS": {"type": "Standard Single", "available": 5, "price": 50, "adults": 1, "children": 0},
@@ -41,9 +41,11 @@ def display_available_rooms(called_from=""):
         return
 
 
-def check_room_availability(room): # extend to take in date and nights
+def check_room_availability(room=""): # extend to take in date and nights
 
-    if room_data[room]["available"] <= 0:
+    if room == "":
+        return False
+    elif room_data[room]["available"] <= 0:
         print("No " + room_data[room]["type"] + " rooms available.")
         return False
     else:
@@ -77,10 +79,20 @@ def get_guest_details(): #with input validation
     while not nights.isdigit():
         nights = input("Enter number of nights: ")
 
+
     room = ""
     display_available_rooms()
-    while room not in ["P", "L", "SS", "TS", "SD", "TD"]: # TO FIX - ADD ROOM AVAILABILITY CHECK
+    while room not in ["P", "L", "SS", "TS", "SD", "TD"]:
+        try:
             room = input("Enter room: ").upper()
+        except:
+            print('You must enter "P", "L", "SS", "TS", "SD", "TD"')
+
+            if check_room_availability(room) == False:
+                room = ""
+                continue
+            else:
+                break
 
 
     store_guest_to_database(first_name, second_name, adults, children, check_in_date, nights, room)
@@ -124,8 +136,10 @@ def store_guest_to_database(first_name, second_name, adults, children, check_in_
 def view_guest_details():
 
     for guest_id in guest_data.keys():
-        print(guest_id)
+        print(guest_id + " " + str(guest_data[guest_id]))
 
+def check_out_guests():
+    pass
 
 def menu():    #Display menu
     os.system("cls")
@@ -149,8 +163,7 @@ def menu():    #Display menu
             view_guest_details()
 
         elif menu_item == "4":
-            os.system("cls")
-            break
+            check_out_guests()
 
         elif menu_item == "5":
             guest_data.close()
