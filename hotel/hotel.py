@@ -5,19 +5,21 @@
 """INIT"""
 
 import shelve, os, calendar, time
-guest_data = shelve.open("var_data")
-guest_data.setdefault("count", 10000)
-
+guest_data = shelve.open("var_data") # persistence via shelve, upgrade to database later.
+room_data = shelve.open("var_room")
 
 """GLOBALS"""
-room_data = { # store to shelve file
-        "P": {"type": "Penthouse", "available": 1, "price": 1000, "adults": 25},
-        "L": {"type": "Luxury", "available": 5, "price": 250, "adults": 5, "children":5},
-        "SS": {"type": "Standard Single", "available": 5, "price": 50, "adults": 1, "children": 0},
-        "TS": {"type": "Twin Single", "available": 5, "price": 75, "adults": 2, "children": 2},
-        "SD": {"type": "Standard Double", "available": 5, "price": 99, "adults": 2, "children": 0},
-        "TD": {"type": "Twin Double", "available": 5, "price": 99, "adults": 2, "children": 2}
-        }
+
+guest_data.setdefault("count", 10000)
+
+# using shelve file to store room data but unable to setdefault() in nested dictionary values
+room_data["P"] = {"type": "Penthouse", "available": 1, "price": 1000, "adults": 25}
+room_data["L"] = {"type": "Luxury", "available": 5, "price": 250, "adults": 5, "children":5}
+room_data["SS"] = {"type": "Standard Single", "available": 5, "price": 50, "adults": 1, "children": 0}
+room_data["TS"] = {"type": "Twin Single", "available": 5, "price": 75, "adults": 2, "children": 2}
+room_data["SD"] = {"type": "Standard Double", "available": 5, "price": 99, "adults": 2, "children": 0}
+room_data["TD"] = {"type": "Twin Double", "available": 5, "price": 99, "adults": 2, "children": 2}
+
 
 
 """METHODS"""
@@ -143,7 +145,20 @@ def view_guest_details(guest_id):
             #Access room_data with key from guest_data[guest_id]["room"]
 
 def check_out_guests():
-    pass
+    os.system("cls")
+
+    for guest_id in guest_data.keys():  # BUGFIX: ignore guest_data "count" variable
+        if str(guest_data[guest_id]).isdigit():
+            continue
+        else:
+            view_guest_details(guest_id)
+
+    #guest_to_check_out = input("\nEnter the GuestID of guest to check out: ")
+    os.system("cls")
+
+    print("Are you sure you want to check out:\n" + view_guest_details("GuestID: 0001"))
+    input()
+
 
 def menu():    #Display menu
     os.system("cls")
